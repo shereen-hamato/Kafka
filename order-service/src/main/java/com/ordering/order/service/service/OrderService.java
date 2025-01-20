@@ -10,19 +10,19 @@ import java.util.Optional;
 @Service
 public class OrderService {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Order> kafkaTemplate;
 
     @Value("${kafka.topic.order-events}")
     private String topic;
 
-    public OrderService(KafkaTemplate<String, String> kafkaTemplate) {
+    public OrderService(KafkaTemplate<String, Order> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     public Optional<Order> processOrder(Order order) {
         try {
             // Send order event to Kafka
-            kafkaTemplate.send(topic, order.orderId(), order.toString());
+            kafkaTemplate.send(topic, order.orderId(), order);
             System.out.println("Order event sent: " + order.toString());
             return Optional.of(order);
         } catch (Exception e) {
